@@ -1,0 +1,17 @@
+{
+  "name": "snapkitty-chain",
+  "version": "0.1.0",
+  "description": "SnapKitty sovereign peer-to-peer blockchain devnet with WORM-sealed blocks and native FRG gas.",
+  "type": "module",
+  "private": true,
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/node.mjs",
+    "node": "node src/node.mjs",
+    "wallet": "node src/wallet.mjs",
+    "test": "node --test"
+  }
+}

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SnapKitty Chain Web3 Console</title>
+  <style>
+    :root {
+      --bg: #05070a;
+      --panel: #0d141b;
+      --line: #173247;
+      --text: #d8f7ff;
+      --muted: #7894a4;
+      --teal: #00d4cc;
+      --gold: #f2c14e;
+      --green: #00ff88;
+      --red: #ff4d61;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 0%, #0b2430 0%, var(--bg) 45%, #010203 100%);
+      color: var(--text);
+      font: 14px/1.45 Consolas, "Courier New", monospace;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(to bottom, rgba(255,255,255,.035), rgba(255,255,255,.035) 1px, transparent 1px, transparent 4px);
+      mix-blend-mode: screen;
+      opacity: .25;
+    }
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0;
+      color: var(--teal);
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+    .tagline { color: var(--muted); margin-top: 4px; }
+    .rpc { display: flex; gap: 8px; align-items: center; }
+    input, button {
+      border: 1px solid var(--line);
+      background: #071018;
+      color: var(--text);
+      font: inherit;
+      border-radius: 4px;
+      padding: 9px 10px;
+    }
+    input { min-width: 280px; }
+    button { cursor: pointer; color: var(--green); }
+    button:hover { border-color: var(--teal); box-shadow: 0 0 14px rgba(0, 212, 204, .18); }
+    .grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+    section, .card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(13,20,27,.96), rgba(6,11,16,.96));
+      border-radius: 6px;
+      box-shadow: 0 0 24px rgba(0, 212, 204, .06);
+    }
+    section { padding: 14px; min-height: 180px; }
+    .card { padding: 12px; }
+    .label { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    .value { color: var(--gold); font-size: 20px; margin-top: 4px; overflow-wrap: anywhere; }
+    h2 { margin: 0 0 10px; color: var(--teal); font-size: 16px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; color: #bdefff; }
+    .validators { display: grid; gap: 8px; }
+    .validator {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid #123047;
+      padding: 8px;
+      border-radius: 4px;
+      background: #071018;
+    }
+    .ok { color: var(--green); }
+    .bad { color: var(--red); }
+    .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; margin-bottom: 12px; }
+    .worm-line { border-bottom: 1px solid #102334; padding: 7px 0; }
+    .worm-line:last-child { border-bottom: 0; }
+    @media (max-width: 900px) {
+      header, .grid, .cards { grid-template-columns: 1fr; }
+      .rpc, .controls { grid-template-columns: 1fr; display: grid; }
+      input { min-width: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>SNAPKITTY CHAIN</h1>
+        <div class="tagline">SACM validator mesh · WORM-sealed blocks · native FRG gas · JSON-RPC Web3 console</div>
+      </div>
+      <div class="rpc">
+        <input id="rpcUrl" value="http://127.0.0.1:8545" aria-label="RPC URL">
+        <button id="refresh">REFRESH</button>
+      </div>
+    </header>
+
+    <div class="cards">
+      <div class="card"><div class="label">Status</div><div class="value" id="status">OFFLINE</div></div>
+      <div class="card"><div class="label">Chain ID</div><div class="value" id="chainId">-</div></div>
+      <div class="card"><div class="label">Height</div><div class="value" id="height">-</div></div>
+      <div class="card"><div class="label">Head</div><div class="value" id="head">-</div></div>
+    </div>
+
+    <div class="grid">
+      <section>
+        <h2>Validator Mesh</h2>
+        <div class="validators" id="validators"></div>
+      </section>
+
+      <section>
+        <h2>Actions</h2>
+        <div class="controls">
+          <input id="faucetAddress" placeholder="sk1 address for devnet faucet">
+          <button id="faucet">FAUCET 1 FRG</button>
+          <button id="mine">PRODUCE BLOCK</button>
+        </div>
+        <pre id="actionLog">Waiting for node...</pre>
+      </section>
+
+      <section>
+        <h2>Latest Block</h2>
+        <pre id="latestBlock">-</pre>
+      </section>
+
+      <section>
+        <h2>WORM Chain</h2>
+        <div id="worm">-</div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const ids = {
+      status: $("status"),
+      chainId: $("chainId"),
+      height: $("height"),
+      head: $("head"),
+      validators: $("validators"),
+      latestBlock: $("latestBlock"),
+      worm: $("worm"),
+      actionLog: $("actionLog")
+    };
+
+    async function rpc(method, params = []) {
+      const res = await fetch($("rpcUrl").value, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: Date.now(), method, params })
+      });
+      const body = await res.json();
+      if (body.error) throw new Error(body.error.message);
+      return body.result;
+    }
+
+    async function refresh() {
+      try {
+        const [health, chainId, blockNumber, validators, latest, worm] = await Promise.all([
+          fetch(`${$("rpcUrl").value}/health`).then((r) => r.json()),
+          rpc("eth_chainId"),
+          rpc("eth_blockNumber"),
+          rpc("sk_getValidators"),
+          rpc("eth_getBlockByNumber", ["latest", true]),
+          rpc("sk_getWorm", [8])
+        ]);
+
+        ids.status.textContent = health.ok ? "ONLINE" : "DEGRADED";
+        ids.status.className = `value ${health.ok ? "ok" : "bad"}`;
+        ids.chainId.textContent = chainId;
+        ids.height.textContent = parseInt(blockNumber, 16).toString();
+        ids.head.textContent = `${health.head.slice(0, 12)}...`;
+        ids.validators.innerHTML = validators.validators.map((agent, i) => (
+          `<div class="validator"><span>${i}. ${agent}</span><span class="ok">EVIDENCE</span></div>`
+        )).join("");
+        ids.latestBlock.textContent = JSON.stringify(latest, null, 2);
+        ids.worm.innerHTML = worm.map((entry) => (
+          `<div class="worm-line"><span class="ok">#${entry.index}</span> ${entry.kind}<br>${entry.seal.slice(0, 24)}...</div>`
+        )).join("");
+      } catch (err) {
+        ids.status.textContent = "OFFLINE";
+        ids.status.className = "value bad";
+        ids.actionLog.textContent = err.message;
+      }
+    }
+
+    $("refresh").addEventListener("click", refresh);
+    $("mine").addEventListener("click", async () => {
+      try {
+        ids.actionLog.textContent = `Produced block: ${await rpc("sk_produceBlock")}`;
+        await refresh();
+      } catch (err) {
+        ids.actionLog.textContent = err.message;
+      }
+    });
+    $("faucet").addEventListener("click", async () => {
+      try {
+        const address = $("faucetAddress").value.trim();
+        if (!address) throw new Error("Enter a sk1 address first.");
+        ids.actionLog.textContent = JSON.stringify(await rpc("sk_faucet", [address, "1000000000000000000"]), null, 2);
+        await refresh();
+      } catch (err) {
+        ids.actionLog.textContent = err.message;
+      }
+    });
+
+    refresh();
+    setInterval(refresh, 4000);
+  </script>
+</body>
+</html>

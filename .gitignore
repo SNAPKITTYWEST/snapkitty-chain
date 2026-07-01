@@ -1,0 +1,10 @@
+node_modules/
+.chain/
+.snapkitty-chain/
+.tmp-smoke/
+*.log
+*.pid
+dist/
+coverage/
+.DS_Store
+Thumbs.db
