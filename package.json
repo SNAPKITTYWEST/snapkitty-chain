@@ -12,6 +12,7 @@
     "start": "node src/node.mjs",
     "node": "node src/node.mjs",
     "wallet": "node src/wallet.mjs",
+    "test:contract": "node --test test/errant-contract.test.mjs",
     "test": "node --test"
   }
 }

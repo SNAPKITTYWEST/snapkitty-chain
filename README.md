@@ -174,7 +174,7 @@ The ZK integration lives under:
 stellar-zk/
   noir/stella-fingerprint/
   errant/stella-fingerprint.errant
-  soroban/stella-fingerprint-contract/
+  errant/stella-fingerprint.test.errant
 ```
 
 The core proof statement is:
@@ -184,6 +184,12 @@ The core proof statement is:
 Noir creates the off-chain proof. The ERRANT contract is the source of truth for
 verification/storage and targets Soroban WASM for Stellar. SnapKitty Chain keeps
 the full WORM witness as the private audit mirror.
+
+Contract test:
+
+```powershell
+npm run test:contract
+```
 
 For the Stellar hackathon, position this as:
 

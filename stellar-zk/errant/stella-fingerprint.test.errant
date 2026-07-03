@@ -1,0 +1,17 @@
+// STELLA Sovereign Fingerprint Test Contract
+// Purpose: minimal executable fixture for the ERRANT -> Soroban verifier rule.
+
+test STELLA_FINGERPRINT_V1.accepts_valid_noir_envelope {
+  given witness.snapaddr_hash != 0;
+  given witness.worm_hash != 0;
+  given proof.public_fingerprint != 0;
+  when verify_fingerprint(proof, witness);
+  then receipt.proof_hash == proof.proof_commitment;
+  then emit stella_verified;
+}
+
+test STELLA_FINGERPRINT_V1.rejects_tampered_worm_hash {
+  given proof.public_signals.worm_hash != witness.worm_hash;
+  when verify_fingerprint(proof, witness);
+  then reject bad_public_signal;
+}
